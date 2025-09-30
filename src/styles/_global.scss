@@ -67,6 +67,7 @@ h2.title {
 
 .btn-wrapper {
   text-align: center;
+  position: relative;
 }
 
 button.btn_spin {
@@ -86,13 +87,12 @@ button.btn_spin {
 
 .winner {
   position: absolute;
-  top: 47%;
   left: -16px;
   transform: translateY(-45%);
   transition: 500ms;
-  display: grid;
   grid-template-columns: repeat(3, 1fr);
   width: 100%;
+  display: none;
 
   .win {
     width: 320px;
@@ -113,6 +113,22 @@ button.btn_spin {
     }
   }
 
+  &.winner-top {
+    top: 17%;
+  }
+
+  &.winner-center {
+    top: 47%;
+  }
+
+  &.winner-bottom {
+    top: 79%;
+  }
+
+  &.active {
+    display: grid;
+  }
+
   @media screen and (max-width: 900px) {
     padding: 0;
     left: -2%;
@@ -128,7 +144,6 @@ button.btn_spin {
 .arrows-wrap {
   display: none;
   position: absolute;
-  top: 50%;
   left: 8px;
   transform: translateY(-50%);
   width: 100%;
@@ -154,6 +169,18 @@ button.btn_spin {
     }
   }
 
+  &.arrows-wrap-top {
+    top: 19%;
+  }
+
+  &.arrows-wrap-center {
+    top: 50%;
+  }
+
+  &.arrows-wrap-bottom {
+    top: 81%;
+  }
+
   @media screen and (max-width: 900px) {
     .arrow-left,
     .arrow-right {
@@ -174,6 +201,16 @@ button.btn_spin {
   display: none;
   width: 100%;
   animation: animatetoptwt .5s ease;
+
+  &.active {
+    display: block;
+  }
+}
+
+.text-nice-one {
+  display: none;
+  width: 100%;
+  animation: animatetoptwt 1s ease;
 
   &.active {
     display: block;

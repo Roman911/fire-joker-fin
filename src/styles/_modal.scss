@@ -40,9 +40,9 @@ $headerHeight: 56px;
     margin: auto;
     animation: appear 0.5s ease;
     border-radius: 20px;
-    overflow: hidden;
 
     > .header {
+      border-radius: 20px 20px 0 0;
       padding: 0 18px;
       position: relative;
       width: 100%;

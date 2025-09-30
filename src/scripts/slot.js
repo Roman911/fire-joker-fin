@@ -10,6 +10,7 @@ import iconPlum from '../images/icon-plum.png';
 import iconMajor from '../images/icon-major.png';
 import iconMega from '../images/icon-mega.png';
 import iconMinor from '../images/icon-minor.png';
+import iconScatter from '../images/scatter.png';
 import iconJoker from '../images/icon-joker.png';
 
 (async () => {
@@ -34,6 +35,7 @@ import iconJoker from '../images/icon-joker.png';
 		iconMajor,
 		iconMega,
 		iconMinor,
+		iconScatter,
 		iconJoker,
 	]);
 
@@ -52,14 +54,16 @@ import iconJoker from '../images/icon-joker.png';
 		Texture.from(iconMajor),
 		Texture.from(iconMega),
 		Texture.from(iconMinor),
+		Texture.from(iconScatter),
 		Texture.from(iconJoker),
 	];
 
 	// Build the reels
 	const reels = [];
 	const reelContainer = new Container();
+	let scrollNumber = 0;
 
-	for (let i = 0; i < 3; i++) {
+	for (let i = 0; i < 5; i++) {
 		const rc = new Container();
 
 		rc.x = i * REEL_WIDTH;
@@ -73,8 +77,8 @@ import iconJoker from '../images/icon-joker.png';
 			blur: new BlurFilter(),
 		};
 
-		reel.blur.blurX = 0;
-		reel.blur.blurY = 0;
+		reel.blur.strengthX = 0;
+		reel.blur.strengthY = 0;
 		rc.filters = [reel.blur];
 
 		// Build the symbols
@@ -140,10 +144,28 @@ import iconJoker from '../images/icon-joker.png';
 					s.x = Math.round((SYMBOL_SIZE - s.width) / 2);
 				}
 
-				if ((i === 0 && j === 4) || (i === 1 && j === 9) || (i === 2 && j === 4) || (i === 3 && j === 9) || (i === 4 && j === 4)) {
-					s.texture = slotTextures[Math.floor(7)];
-					s.scale.x = s.scale.y = Math.min(SYMBOL_SIZE / s.texture.width, SYMBOL_SIZE / s.texture.height);
-					s.x = Math.round((SYMBOL_SIZE - s.width) / 2);
+				if (scrollNumber === 2) {
+					if ((i === 0 && j === 6) || (i === 1 && j === 6) || (i === 2 && j === 6)) {
+						s.texture = slotTextures[Math.floor(10)];
+						s.scale.x = s.scale.y = Math.min(SYMBOL_SIZE / s.texture.width, SYMBOL_SIZE / s.texture.height);
+						s.x = Math.round((SYMBOL_SIZE - s.width) / 2);
+					}
+				} else if (scrollNumber === 4) {
+					if ((i === 0 && j === 1) || (i === 1 && j === 1) || (i === 2 && j === 1)) {
+						s.texture = slotTextures[Math.floor(0)];
+						s.scale.x = s.scale.y = Math.min(SYMBOL_SIZE / s.texture.width, SYMBOL_SIZE / s.texture.height);
+						s.x = Math.round((SYMBOL_SIZE - s.width) / 2);
+					}
+					if ((i === 0 && j === 0) || (i === 1 && j === 0) || (i === 2 && j === 0)) {
+						s.texture = slotTextures[Math.floor(0)];
+						s.scale.x = s.scale.y = Math.min(SYMBOL_SIZE / s.texture.width, SYMBOL_SIZE / s.texture.height);
+						s.x = Math.round((SYMBOL_SIZE - s.width) / 2);
+					}
+					if ((i === 0 && j === 9) || (i === 1 && j === 9) || (i === 2 && j === 9)) {
+						s.texture = slotTextures[Math.floor(0)];
+						s.scale.x = s.scale.y = Math.min(SYMBOL_SIZE / s.texture.width, SYMBOL_SIZE / s.texture.height);
+						s.x = Math.round((SYMBOL_SIZE - s.width) / 2);
+					}
 				}
 			}
 		}
@@ -204,12 +226,19 @@ import iconJoker from '../images/icon-joker.png';
 
 	const elements = {
 		btn: document.querySelector('.btn_spin'),
-		winner: document.querySelector('.winner'),
+		winnerTop: document.querySelector('.winner-top'),
+		winnerCenter: document.querySelector('.winner-center'),
+		winnerBottom: document.querySelector('.winner-bottom'),
 		winElements: document.querySelectorAll('.win'),
 		modalOverlay: document.querySelector('.modal_overlay'),
 		modalSignup: document.querySelector('.modal_signup'),
 		textSpin: document.querySelector('.text-win'),
-		arrows: document.querySelector('.arrows-wrap'),
+		textNiceOne: document.querySelector('.text-nice-one'),
+		hand: document.querySelector('.hand.content'),
+		handModal: document.querySelector('.hand.reg'),
+		arrowsCenter: document.querySelector('.arrows-wrap-center'),
+		arrowsTop: document.querySelector('.arrows-wrap-top'),
+		arrowsBottom: document.querySelector('.arrows-wrap-bottom'),
 		sounds: {
 			win: new Audio('https://n1md7.github.io/slot-game/sound/win.mp3'),
 			spin: new Audio('https://n1md7.github.io/slot-game/sound/spin.mp3'),
@@ -224,6 +253,12 @@ import iconJoker from '../images/icon-joker.png';
 		});
 	};
 
+	const removeClassWithDelay = (elements, className) => {
+		elements.forEach((element) => {
+			element.classList.remove(className);
+		});
+	};
+
 	const showModal = (overlay, modal, delay) => {
 		setTimeout(() => {
 			overlay.classList.add('show');
@@ -231,27 +266,75 @@ import iconJoker from '../images/icon-joker.png';
 		}, delay);
 	};
 
-	const winnerShow = () => {
+	const niceOneShow = () => {
 		setTimeout(() => {
 			elements.sounds.win.play();
-			elements.winner.classList.add('active');
+			elements.winnerCenter.classList.add('active');
 			addClassWithDelay(elements.winElements, 'active', 10);
 		}, 3800);
 		setTimeout(() => {
-			elements.arrows.classList.add('active');
+			elements.arrowsCenter.classList.add('active');
+		}, 4200);
+		setTimeout(() => {
+			elements.textNiceOne.classList.add('active');
+		}, 5500);
+
+		setTimeout(() => {
+			elements.hand.classList.add('show');
+			elements.textNiceOne.classList.remove('active');
+			elements.winnerCenter.classList.remove('active');
+			elements.arrowsCenter.classList.remove('active');
+			removeClassWithDelay(elements.winElements, 'active');
+		}, 7500);
+	};
+
+	const winnerShow = () => {
+		setTimeout(() => {
+			elements.sounds.win.play();
+			elements.winnerCenter.classList.add('active');
+			elements.winnerTop.classList.add('active');
+			elements.winnerBottom.classList.add('active');
+			addClassWithDelay(elements.winElements, 'active', 10);
+		}, 3800);
+		setTimeout(() => {
+			elements.arrowsTop.classList.add('active');
+			elements.arrowsCenter.classList.add('active');
+			elements.arrowsBottom.classList.add('active');
 		}, 4200);
 		setTimeout(() => {
 			elements.textSpin.classList.add('active');
 		}, 5500);
 		showModal(elements.modalOverlay, elements.modalSignup, 9000);
+		setTimeout(() => {
+			elements.handModal.classList.add('show');
+		}, 10000);
 	};
+
+	setTimeout(() => {
+		elements.hand.classList.add('show');
+	}, 2000);
 
 	elements.btn.addEventListener('click', () => {
 		//updateTimer();
 		elements.sounds.spin.play();
 		startPlay();
-		winnerShow();
+		elements.hand.classList.remove('show');
 		elements.btn.style.opacity = 0.5;
 		elements.btn.style.pointerEvents = 'none';
+		setTimeout(() => {
+			elements.btn.style.opacity = 1;
+			elements.btn.style.pointerEvents = 'initial';
+		}, 4500);
+		if(scrollNumber === 1) {
+			niceOneShow();
+		} else if(scrollNumber === 3) {
+			winnerShow();
+		}
+		scrollNumber++;
+	});
+
+	const submit = document.querySelector('#submit');
+	submit.addEventListener('click', () => {
+		FbPlayableAd.onCTAClick();
 	});
 })();
